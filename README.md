@@ -1,2 +1,2 @@
-# chinese-checkers-alpha-zero
-A chinese checkers game AI based on AlphaZero algorithm
+# chinese-checkers-alpha-zero-general
+Implementation of AlphaZero algorithm on Chinese checkers using alpha-zero-general.
