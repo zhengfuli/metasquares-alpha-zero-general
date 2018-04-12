@@ -1,2 +1,2 @@
-# cowboy-checkers-alpha-zero-general
-Implementation of AlphaZero algorithm on cowboy checkers using alpha-zero-general.
+# chinese-checkers-alpha-zero-general
+Implementation of AlphaZero algorithm on chinese checkers using alpha-zero-general.
