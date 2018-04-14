@@ -1,2 +1,2 @@
-# chinese-checkers-alpha-zero-general
-Implementation of AlphaZero algorithm on chinese checkers using alpha-zero-general.
+# metasquares-alpha-zero-general
+Implementation of AlphaZero algorithm on MetaSquares game using alpha-zero-general framework.

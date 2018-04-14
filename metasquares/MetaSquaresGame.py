@@ -2,7 +2,7 @@ from __future__ import print_function
 import sys
 sys.path.append('..')
 from Game import Game
-from.ChineseCheckersLogic import Board
+from.MetaSquaresLogic import Board
 import numpy as np
 
 class ChineseCheckersGame(Game):
