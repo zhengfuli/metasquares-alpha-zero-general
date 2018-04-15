@@ -1,94 +1,103 @@
-# Author: Zhengfu Li
-# Date: Mar. 28, 2018
-import chess
+# With Reference from https://github.com/suragnair
+# /alpha-zero-general/blob/master/othello/OthelloLogic.py
+# and gobang/GobangLogic.py
+
+# Board class.
+# Board data:
+#   1=white, -1=black, 0=empty
+#   first dim is column , 2nd is row:
+#      pieces[1][7] is the square in column 2,
+#      at the opposite end of the board in row 8.
+# Squares are stored and manipulated as (x,y) tuples.
+# x is the column, y is the row.
+
 import numpy as np
 
 class Board(object):
-        # Input:
-        #    int width
-        #    int homeBorder
-        # Output:
-        #    list[list]
 
-        # width(diagonal length))
-        # 0 0 0 0 1 1 1
-        # 0 0 0 0 0 1 1
-        # 0 0 0 0 0 0 1 homeBorder
-        # 0 0 0 0 0 0 0
-        #-1 0 0 0 0 0 0
-        #-1-1 0 0 0 0 0
-        #-1-1-1 0 0 0 0
+    def __init__(self, n):
+        self.n = n
+        self.pieces = [[0]*self.n for i in xrange(self.n)]
+        self.squaresMap = [{'points':4,'tiles':[[[x,y],[x,y+1],[x+1,y],[x+1,y+1]]
+                                                for x in xrange(self.n-1) for y in xrange(self.n-1)]},
+                           {'points':4,'tiles':[[[x,y],[x+1,y+1],[x+2,y],[x+1,y-1]]
+                                                for x in xrange(self.n-2) for y in xrange(1,self.n-1)]},
+                           {'points':9,'tiles':[[[x,y],[x,y+2],[x+2,y],[x+2,y+2]]
+                                                for x in xrange(self.n-2) for y in xrange(self.n-2)]},
+                           {'points':9,'tiles':[[[x,y],[x+1,y+2],[x+3,y+1],[x+2,y-1]]
+                                                for x in xrange(self.n-3) for y in xrange(1,self.n-2)]},
+                           {'points':9,'tiles':[[[x,y],[x+2,y+1],[x+3,y-1],[x+1,y-2]]
+                                                for x in xrange(self.n-3) for y in xrange(2,self.n-1)]},
+                           {'points':9,'tiles':[[[x,y],[x+2,y+2],[x+4,y],[x-2,y-2]]
+                                                for x in xrange(self.n-4) for y in xrange(2,self.n-2)]},
+                           {'points':16,'tiles':[[[x,y],[x,y+3],[x+3,y+3],[x+3,y]]
+                                                for x in xrange(self.n-3) for y in xrange(self.n-3)]},
+                           {'points':16,'tiles':[[[x,y],[x+1,y+3],[x+4,y+2],[x+3,y-1]]
+                                                for x in xrange(self.n-4) for y in xrange(1,self.n-3)]},
+                           {'points':16,'tiles':[[[x,y],[x+2,y+3],[x+5,y+1],[x+3,y-2]]
+                                                for x in xrange(self.n-5) for y in xrange(2,self.n-3)]},
+                           {'points':25,'tiles':[[[x,y],[x+3,y+3],[x,y+6],[x+3,y-3]]
+                                                for x in xrange(self.n-6) for y in xrange(3,self.n-3)]},
+                           {'points':16,'tiles':[[[x,y],[x+3,y+2],[x+5,y-1],[x+2,y-3]]
+                                                for x in xrange(self.n-4) for y in xrange(3,self.n-1)]},
+                           {'points':16,'tiles':[[[x,y],[x+3,y+1],[x+4,y-2],[x+1,y-3]]
+                                                for x in xrange(self.n-4) for y in xrange(3,self.n-1)]},
+                           {'points':25,'tiles':[[[x,y],[x,y+4],[x+4,y+4],[x+4,y]]
+                                                for x in xrange(self.n-4) for y in xrange(self.n-4)]},
+                           {'points':25,'tiles':[[[x,y],[x+4,y+1],[x+5,y+3],[x+4,y-1]]
+                                                for x in xrange(self.n-5) for y in xrange(1,self.n-4)]},
+                           {'points':25,'tiles':[[[x,y],[x+2,y+4],[x+6,y+2],[x+4,y-2]]
+                                                for x in xrange(self.n-6) for y in xrange(2,self.n-4)]},
+                           {'points':25,'tiles':[[[x,y],[x+4,y+2],[x+6,y-2],[x+2,y-4]]
+                                                for x in xrange(self.n-6) for y in xrange(4,self.n-2)]},
+                           {'points':25,'tiles':[[[x,y],[x+4,y+1],[x+5,y-3],[x+1,y-4]]
+                                                for x in xrange(self.n-5) for y in xrange(4,self.n-1)]},
+                           {'points':36,'tiles':[[[x,y],[x,y+5],[x+5,y+5],[x+5,y]]
+                                                for x in xrange(self.n-5) for y in xrange(self.n-5)]},
+                           {'points':36,'tiles':[[[x,y],[x+1,y+5],[x+6,y+4],[x+5,y-1]]
+                                                for x in xrange(self.n-6) for y in xrange(1,self.n-5)]},
+                           {'points':36,'tiles':[[[x,y],[x+2,y+5],[x+7,y+3],[x+5,y-2]]
+                                                for x in xrange(self.n-7) for y in xrange(2,self.n-5)]},
+                           {'points':36,'tiles':[[[x,y],[x+3,y+4],[x+7,y+1],[x+4,y-3]]
+                                                for x in xrange(self.n-7) for y in xrange(3,self.n-4)]},
+                           {'points':36,'tiles':[[[x,y],[x+4,y+3],[x+7,y-1],[x+3,y-4]]
+                                                for x in xrange(self.n-7) for y in xrange(4,self.n-3)]},
+                           {'points':36,'tiles':[[[x,y],[x+5,y+2],[x+7,y-3],[x+2,y-5]]
+                                                for x in xrange(self.n-7) for y in xrange(5,self.n-2)]},
+                           {'points':36,'tiles':[[[x,y],[x+5,y+1],[x+6,y-4],[x+1,y-5]]
+                                                for x in xrange(self.n-6) for y in xrange(5,self.n-1)]},
+                           {'points':49,'tiles':[[[x,y],[x,y+6],[x+6,y+6],[x+6,y]]
+                                                for x in xrange(self.n-6) for y in xrange(self.n-6)]},
+                           {'points':49,'tiles':[[[x,y],[x+1,y+6],[x+7,y+5],[x+6,y-1]]
+                                                for x in xrange(self.n-7) for y in xrange(1,self.n-6)]},
+                           {'points':49,'tiles':[[[x,y],[x+6,y+1],[x+7,y-5],[x+1,y-6]]
+                                                for x in xrange(self.n-7) for y in xrange(6,self.n-1)]},
+                           {'points':64,'tiles':[[[x,y],[x,y+7],[x+7,y+7],[x+7,y]]
+                                                for x in xrange(self.n-7) for y in xrange(self.n-7)]}]
 
-        # 1 = white, -1 = black, 0 = empty
-        # default: 7, 3; standard: 9, 4
+    def __getitem__(self, index):
+        return self.pieces[index]
 
-    def __init__(self, width, homeBorder):
-        self.w = width
-        self.hb = homeBorder
-        self.pieces = [[0]*self.w for i in xrange(self.w)]
-        self.directions = ((-1,0),(0,1),(1,1),(1,0),(0,-1),(-1,-1))
+    def count_scores(self, player):
+        pass
 
-        for i in xrange(self.w):
-            for j in xrange(self.w):
-                if i<self.hb and j>=(self.w-self.hb+i):
-                    self.pieces[i][j] = 1
-                elif i>=(self.w-self.hb) and j<=(self.hb+i-self.w):
-                    self.pieces[i][j] = -1
-
-        def __getitem__(self, index):
-            return self.pieces[index]
-
-    # return all legal moves for a given color
-    # input:
-    #    int color = -1 for black, 1 for white
-    # output:
-    #    list moves [list[int from_row, from_col, to_row, to_row]]
     def get_legal_moves(self, color):
         moves = set()
+        for y in xrange(self.n):
+            for x in xrange(self.n):
+                if self[x][y] == 0:
+                    moves.add((x,y))
+        return list(moves)
 
-        # find current positions of checkers in this color
-        for row in xrange(len(self.pieces)):
-            for col in xrange(len(self.pieces[row])):
-                if self.pieces[row][col] == color:
+    def has_legal_moves(self):
+        for y in xrange(self.n):
+            for x in xrange(self.n):
+                if self[x][y] == 0:
+                    return True
+        return False
 
-
-
-
-
-
-# def bb2array(b):  # board to vector of len 64
-#     x = np.zeros(64, dtype=np.int8)
-#     # print('Flipping: ', flip)
-#     for pos in range(64):
-#         piece = b.piece_type_at(pos)  # Gets the piece type at the given square. 0==>blank,1,2,3,4,5,6
-#         if piece:
-#             color = int(bool(b.occupied_co[chess.BLACK] & chess.BB_SQUARES[pos]))  # to check if piece is black or white
-#             # print ('piece: ', piece, 'b.occupied_co[chess.BLACK]: ', b.occupied_co[chess.BLACK], 'chess.BB_SQUARES[pos]: ', chess.BB_SQUARES[pos], 'color: ', color, 'pos: ', pos, '\t', b.occupied_co[chess.BLACK] & chess.BB_SQUARES[pos])
-#             col = int(pos % 8)
-#             row = int(pos / 8)
-#             #		if flip:
-#             #		row = 7-row
-#             #		color = 1 - color
-#             x[row * 8 + col] = -piece if color else piece
-#     t = b.turn
-#     c = b.castling_rights
-#     e = b.ep_square
-#     h = b.halfmove_clock
-#     f = b.fullmove_number
-#     return x
-#
-#
-# def vector2matrix(x):
-#     y = np.reshape(x, (8, 8))
-#     return y
-
-if __name__ == '__main__':
-    b = Board(7,3)
-    b.get_legal_moves(-1)
-#     print b.pieces
-#     board = chess.Board()
-#     X = np.array([bb2array(board)])
-#     pieces = vector2matrix(X[0])
-#     chessboard = board
-#     print pieces, chessboard
+    def execute_move(self, move, color):
+        (x,y) = move
+        assert self[x][y] == 0
+        self[x][y] = color
 
