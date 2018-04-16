@@ -78,8 +78,20 @@ class Board(object):
     def __getitem__(self, index):
         return self.pieces[index]
 
-    def count_scores(self, player):
-        pass
+    def count_score(self, player):
+        score = 0
+        for squareType in self.squaresMap:
+            points = squareType['points']
+            for tiles in squareType['tiles']:
+                checkFlag = 0
+                tileNum = 0
+                while tileNum < 4 and checkFlag == 0:
+                    if self.pieces[tiles[tileNum][0]][tiles[tileNum][1]] != player:
+                        checkFlag = 1
+                    tileNum += 1
+                if checkFlag == 0:
+                    score += points
+        return score
 
     def get_legal_moves(self, color):
         moves = set()
