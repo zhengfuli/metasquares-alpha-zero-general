@@ -16,7 +16,7 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.autograd import Variable
 
-from .OthelloNNet import OthelloNNet as onnet
+from .MetaSquaresNNet import MetaSquaresNNet as onnet
 
 args = dotdict({
     'lr': 0.001,
