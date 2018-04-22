@@ -16,6 +16,10 @@ class MetaSquaresGame(Game):
     def getBoardSize(self):
         return (self.n, self.n)
 
+    def getActionSize(self):
+        # return number of actions
+        return self.n * self.n + 1
+
     def getNextState(self, board, player, action):
         if action == self.n * self.n:
             return (board, -player)
