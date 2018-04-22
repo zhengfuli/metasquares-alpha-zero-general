@@ -2,7 +2,8 @@ from collections import deque
 from Arena import Arena
 from MCTS import MCTS
 import numpy as np
-from pytorch_classification.utils import Bar, AverageMeter
+from pytorch_classification.utils.progress.progress.bar import Bar
+from pytorch_classification.utils import AverageMeter
 import time, os, sys
 from pickle import Pickler, Unpickler
 from random import shuffle

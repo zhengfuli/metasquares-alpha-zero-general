@@ -5,7 +5,8 @@ import sys
 
 sys.path.append('../../')
 from utils import *
-from pytorch_classification.utils import Bar, AverageMeter
+from pytorch_classification.utils.progress.progress.bar import Bar
+from pytorch_classification.utils import AverageMeter
 from NeuralNet import NeuralNet
 
 import argparse
