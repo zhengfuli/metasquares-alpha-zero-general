@@ -49,4 +49,9 @@ class GreedyMetaSquaresPlayer():
             score = self.game.getScore(nextBoard, 1)
             candidates += [(-score, a)]
         candidates.sort()
-        return candidates[0][1]
+
+        num_potentials = 0
+        for candidate in candidates:
+            if candidate[0] == candidates[0][0]:
+                num_potentials += 1
+        return valids[candidates[np.random.randint(num_potentials)][1]]
