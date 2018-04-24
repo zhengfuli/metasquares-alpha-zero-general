@@ -82,24 +82,24 @@ class MetaSquaresGame(Game):
 
 def display(board):
     n = board.shape[0]
-
+    print ("   ", end="")
     for y in range(n):
-        print(y, "|", end="")
+        print (y," ",end="")
     print("")
-    print(" -----------------------")
+    print("  --------------------------")
     for y in range(n):
-        print(y, "|", end="")    # print the row #
+        print(y, "|",end="")    # print the row #
         for x in range(n):
             piece = board[y][x]    # get the piece to print
-            if piece == -1:
-                print("b ", end="")
-            elif piece == 1:
-                print("W ", end="")
+            if piece == -1: print("B  ",end="")
+            elif piece == 1: print("W  ",end="")
+            elif piece == 0: print("-  ",end="")
             else:
-                if x == n:
-                    print("-", end="")
+                if x==n:
+                    print("-",end="")
                 else:
-                    print("- ", end="")
+                    print("- ",end="")
         print("|")
 
-    print("   -----------------------")
+    print("  --------------------------")
+    #print(board)
